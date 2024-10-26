@@ -17,7 +17,7 @@ namespace DailyProduction_TesAGIT_SekarPuspita
 
         protected void btnSave_Click(object sender, EventArgs e)
         {
-            // Ambil input dari TextBox
+            
             int[] plan = {
                 int.Parse(txtMonday.Value),
                 int.Parse(txtTuesday.Value),
@@ -28,16 +28,16 @@ namespace DailyProduction_TesAGIT_SekarPuspita
                 int.Parse(txtSunday.Value)
             };
 
-            // Logika untuk penyesuaian produksi
+           
             int[] adjustedPlan = AdjustProductionPlan(plan);
 
-            // Simpan data ke database
+          
             SavePlanToDatabase(plan, adjustedPlan);
 
-            // Muat ulang data dari database
+          
             LoadPlans();
 
-            // Hapus nilai input setelah menyimpan
+           
             txtMonday.Value = "";
             txtTuesday.Value = "";
             txtWednesday.Value = "";
@@ -52,7 +52,7 @@ namespace DailyProduction_TesAGIT_SekarPuspita
             int total = 0;
             int count = 0;
 
-            // Hitung total produksi untuk hari yang tidak libur (non-zero) dan jumlah hari non-zero
+           
             foreach (var p in plan)
             {
                 if (p > 0)
@@ -62,28 +62,26 @@ namespace DailyProduction_TesAGIT_SekarPuspita
                 }
             }
 
-            // Tentukan rata-rata produksi untuk distribusi
-            int avg = total / (count > 6 ? 6 : count); // Rata-rata hanya untuk hari Senin-Sabtu
+            int avg = total / (count > 6 ? 6 : count); 
             int remainder = total % (count > 6 ? 6 : count);
             int[] adjustedPlan = new int[plan.Length];
 
-            // Atur Senin dan Kamis sebagai prioritas jika produksi memungkinkan
+           
             if (plan[0] > 0) // Senin
             {
                 adjustedPlan[0] = avg + (remainder > 0 ? 1 : 0);
                 remainder--;
             }
 
-            if (plan[3] > 0) // Kamis
+            if (plan[3] > 0) 
             {
                 adjustedPlan[3] = avg + (remainder > 0 ? 1 : 0);
                 remainder--;
             }
 
-            // Distribusi produksi ke hari lain (Selasa, Rabu, Jumat, Sabtu)
             for (int i = 1; i < 6; i++)
             {
-                if (i == 3) // Skip Kamis karena sudah diatur
+                if (i == 3) 
                     continue;
 
                 if (plan[i] > 0)
@@ -93,7 +91,6 @@ namespace DailyProduction_TesAGIT_SekarPuspita
                 }
             }
 
-            // Jika masih ada sisa produksi dan hari Minggu tidak boleh 0
             if (remainder > 0 && plan[6] > 0)
             {
                 adjustedPlan[6] = remainder;
